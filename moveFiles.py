@@ -53,40 +53,37 @@ class MoveFiles(Gtk.Window):
         spinner.start()
         move_files_with_pattern(target_directory, destination_directory, pattern_string)
     
-    # Simulate some processing (you can replace this with your actual processing logic)
-        GLib.timeout_add(1000, simulate_processing, spinner)
-
-def simulate_processing(spinner):
-    # Simulate processing for 5 seconds (5000 milliseconds)
-        for i in range(50):
-            # Perform processing tasks here (replace this with your actual processing code)
-            Gtk.main_iteration_do(False)
-            GLib.idle_add(update_progress, progress_bar, i)
-            GLib.usleep(100000)  # Sleep for 100 milliseconds (simulated processing)
         
-        # Stop the animation when processing is done
-        spinner.stop()
+
+        
 
 def update_progress(progress_bar, value):
-        progress = value / 50.0  # Assuming 50 steps in the processing
+        progress = value / size  # declaring size of list as steps in the processing
         progress_bar.set_fraction(progress)
 
 def move_files_with_pattern(src_folder, dest_folder, pattern):
+        global size
         # Create the destination folder if it doesn't exist
         if not os.path.exists(dest_folder):
             os.makedirs(dest_folder)
-
-            # Iterate over files in the source folder
-        for filename in os.listdir(src_folder):
-            src_filepath = os.path.join(src_folder, filename)
+        list_of_files = os.listdir(src_folder)
+            
+        size = len(list_of_files)
+        # Iterate over files in the source folder    
+        for index in range(size):
+            src_filepath = os.path.join(src_folder, list_of_files[index])
                 
                 # Check if the file name contains "S02"
-            if pattern in filename:
-                dest_filepath = os.path.join(dest_folder, filename)
+            if pattern in list_of_files[index]:
+                dest_filepath = os.path.join(dest_folder, list_of_files[index])
 
                     # Move the file to the destination folder
                 shutil.move(src_filepath, dest_filepath)
-                print(f"Moved: {filename} to {dest_folder}")
+                print(f"Moved: {list_of_files[index]} to {dest_folder}")
+            Gtk.main_iteration_do(False)
+            GLib.idle_add(update_progress, progress_bar, index+1)
+            GLib.usleep(10000) 
+        spinner.stop()
 
 if __name__ == "__main__":
     win = MoveFiles()

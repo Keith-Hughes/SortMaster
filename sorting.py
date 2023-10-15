@@ -16,11 +16,11 @@ def move_files_with_pattern(src_folder, dest_folder, pattern):
             for index in range(size):
                 src_filepath = os.path.join(src_folder, list_of_files[index])
                     
-                    # Check if the file name contains "S02"
+                    # Check if the file name contains "pattern"
                 if pattern in list_of_files[index]:
                     dest_filepath = os.path.join(dest_folder, list_of_files[index])
 
-                        # Move the file to the destination folder
+                        # Move the file to the destination path
                     shutil.move(src_filepath, dest_filepath)
                     print(f"Moved: {list_of_files[index]} to {dest_folder}")
                 gui.progress_animation(index, size)

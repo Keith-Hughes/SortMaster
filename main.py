@@ -1,4 +1,4 @@
-import gui, sorting
+import gui
 
 def start_app():
     win = gui.Gui()

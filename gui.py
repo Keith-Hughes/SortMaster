@@ -9,6 +9,7 @@ class Gui(Gtk.Window):
         Gtk.Window.__init__(self, title="SortMaster")
         self.set_border_width(2)
         self.connect("destroy", Gtk.main_quit)
+        
 
         # Create a grid to organize the form
         grid = Gtk.Grid()
@@ -28,6 +29,14 @@ class Gui(Gtk.Window):
         self.pattern_entry = Gtk.Entry()
         self.pattern_entry.set_placeholder_text("Enter Pattern")
 
+        # Create a "Browse" button for the target entry
+        target_browse_button = Gtk.Button(label="Browse")
+        target_browse_button.connect("clicked", self.on_browse_button_clicked, self.target_entry)
+
+        # Create a "Browse" button for the destination entry
+        destination_browse_button = Gtk.Button(label="Browse")
+        destination_browse_button.connect("clicked", self.on_browse_button_clicked, self.destination_entry)
+
         # Create a submit button
         submit_button = Gtk.Button(label="Sort")
         submit_button.connect("clicked", self.on_submit_button_clicked)
@@ -37,16 +46,33 @@ class Gui(Gtk.Window):
         spinner = Gtk.Spinner()
         progress_bar = Gtk.ProgressBar()
         # Attach widgets to the grid
+        #attach(widget to attach, column pos, row pos, col span, row span)
         grid.attach(target_label, 0, 0, 1, 1)
         grid.attach(self.target_entry, 1, 0, 1, 1)
+        grid.attach(target_browse_button, 2, 0, 1, 1)
         grid.attach(destination_label, 0, 1, 1, 1)
         grid.attach(self.destination_entry, 1, 1, 1, 1)
+        grid.attach(destination_browse_button, 2, 1, 1, 1)
         grid.attach(pattern_label, 0, 2, 1, 1)
         grid.attach(self.pattern_entry, 1, 2, 1, 1)
         grid.attach(submit_button, 0, 3, 2, 1)
         grid.attach(spinner, 2, 3, 1, 1)
         grid.attach(progress_bar, 0, 4, 2, 1)
 
+    def on_browse_button_clicked(self, button, entry):
+        file_chooser = Gtk.FileChooserDialog(
+            title="Select a Folder",
+            action=Gtk.FileChooserAction.SELECT_FOLDER,
+            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK),
+            transient_for=self,
+        )
+
+        response = file_chooser.run()
+        if response == Gtk.ResponseType.OK:
+            folder = file_chooser.get_filename()
+            entry.set_text(folder)
+
+        file_chooser.destroy()
 
     def on_quit_click(self, widget):
          self.close()
@@ -70,6 +96,18 @@ def update_progress(value, file_size):
 
 def stop_spinner():
         spinner.stop()
+
+def show_popup(files_moved):
+    dialog = Gtk.MessageDialog(
+        transient_for=None,
+        flags=0,
+        type=Gtk.MessageType.INFO,
+        buttons=Gtk.ButtonsType.OK,
+        message_format=f"{files_moved} files were moved."
+    )
+    dialog.run()
+    dialog.destroy()        
+        
     
 def progress_animation(step:float, total_steps:int):
         Gtk.main_iteration_do(False)

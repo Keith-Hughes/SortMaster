@@ -12,6 +12,7 @@ def move_files_with_pattern(src_folder, dest_folder, pattern):
             list_of_files = os.listdir(src_folder)
                 
             size = len(list_of_files)
+            num_of_files_moved=0
             # Iterate over files in the source folder    
             for index in range(size):
                 src_filepath = os.path.join(src_folder, list_of_files[index])
@@ -19,6 +20,7 @@ def move_files_with_pattern(src_folder, dest_folder, pattern):
                     # Check if the file name contains "pattern"
                 if pattern in list_of_files[index]:
                     dest_filepath = os.path.join(dest_folder, list_of_files[index])
+                    num_of_files_moved += 1
 
                         # Move the file to the destination path
                     shutil.move(src_filepath, dest_filepath)
@@ -26,3 +28,4 @@ def move_files_with_pattern(src_folder, dest_folder, pattern):
                 gui.progress_animation(index, size)
                 
             gui.stop_spinner()
+            gui.show_popup(num_of_files_moved)
